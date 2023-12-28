@@ -1,0 +1,215 @@
+import 'package:ddc_app1/homePage.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+class OnBoardingScreen extends StatefulWidget {
+  const OnBoardingScreen({super.key});
+
+  @override
+  State<OnBoardingScreen> createState() => _OnBoardingScreenState();
+}
+
+class _OnBoardingScreenState extends State<OnBoardingScreen> {
+  final controller = PageController();
+  bool isLastPage = false;
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: Container(
+          color: Colors.white,
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: PageView(
+            controller: controller,
+            onPageChanged: (index) {
+              setState(() => isLastPage = index == 2);
+            },
+            children: [
+              //................................................................... 1
+              buildPage(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  urlImage: 'assets/onboarding/one5.jpg',
+                  title: 'Dental Digital clinic',
+                  subtitle: 'All about teeth daignose & learn '),
+              //................................................................... 2
+              buildPage(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  urlImage: 'assets/onboarding/two.jpg',
+                  title: 'Dental Digital clinic',
+                  subtitle: 'All about teeth daignose & learn '),
+              //................................................................... 3
+              buildPage(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  urlImage: 'assets/onboarding/two.jpg',
+                  title: 'Dental Digital clinic',
+                  subtitle: 'All about teeth daignose & learn '),
+            ],
+          ),
+        ),
+
+        //........................................................................ botomSheet
+        bottomSheet: isLastPage
+            ? SizedBox(
+                height: 75,
+                width: double.infinity,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    // primary: Colors.blueAccent,
+                    backgroundColor: Color.fromARGB(255, 115, 69, 255),
+                  ),
+                  onPressed: () async {
+                    // Flag to play it only once..
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setBool('showHome', true);
+
+                    // navigate directly to home..................................... Get Started
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                    );
+                  },
+                  child: const Text(
+                    "GET STARTED",
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
+              )
+            : Container(
+                color: Colors.white,
+                padding: const EdgeInsets.symmetric(),
+                height: 80,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      //.................................................................. SKIP
+                      child: const Text(
+                        "SKIP",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () => controller.jumpToPage(2),
+                    ),
+                    Center(
+                      //............................................................ Dots Indicator
+                      child: SmoothPageIndicator(
+                        controller: controller,
+                        count: 3,
+                        effect: WormEffect(
+                          spacing: 12,
+                          dotColor: Colors.blueAccent,
+                          activeDotColor: Colors.blue.shade600,
+                        ),
+                        onDotClicked: (index) => controller.animateToPage(index,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeOutQuint),
+                      ),
+                    ),
+                    TextButton(
+                      //.................................................................. Next
+                      child: const Text(
+                        "SKIP",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () => controller.nextPage(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeInCubic),
+                    ),
+                  ],
+                ),
+              ),
+      );
+}
+
+Widget buildPage({
+  required Color color,
+  required String urlImage,
+  required String title,
+  required String subtitle,
+}) =>
+    Container(
+      color: color,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Image.asset(
+            urlImage,
+            fit: BoxFit.cover,
+            width: double.infinity,
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Text(
+            title,
+            style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 18, 0, 84)),
+          ),
+          const SizedBox(
+            height: 7,
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(),
+            child: Text(
+              subtitle,
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 28, 1, 127)),
+            ),
+          ),
+        ],
+      ),
+    );
+
+//libraries  المكاتب التي يجب
+
+// smooth_page_indicator: ^1.1.0
+// shared_preferences: ^2.2.2
+//flutter pub add shared_preferences    تثبيت المكتبة عبر ال Terminal
+// assets:
+//   - assets/
+//   - assets/onboarding/
+
+//............................................................  Main
+// Future main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   final prefs = await SharedPreferences.getInstance();
+//   final showHome = prefs.getBool('showHome') ?? false;
+
+//   runApp(MyApp(showHome: showHome));
+// }
+
+// class MyApp extends StatelessWidget {
+//   final bool showHome;
+//   const MyApp({
+//     Key? key,
+//     required this.showHome,
+//   }) : super(key: key);
+
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       title: 'Flutter Demo',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: showHome ? const HomePage() : const OnBoardingScreen(),
+//     );
+//   }
+// }
