@@ -1,0 +1,120 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:slimy_card/slimy_card.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: Color.fromRGBO(102, 0, 255, 1),
+        statusBarBrightness: Brightness.dark));
+    return Scaffold(
+      appBar: AppBar(
+        //toolbarHeight: 50,
+        title: const Text('3D Models'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              prefs.setBool('showHome', false);
+
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => const OnBoardingScreen(),
+              ));
+            },
+          ),
+        ],
+      ),
+
+      //...........................................................................
+      backgroundColor: Color.fromARGB(255, 17, 0, 208),
+      body:  Column(
+        children: [
+          SizedBox(height: 50),
+          SlimyCard(
+            color: Colors.white,
+            topCardWidget: topCardWidget(),
+            bottomCardWidget: bottomCardWidget(),
+          ),
+        ],
+      )
+    );
+  }
+}
+
+class MyCustomWidget extends StatefulWidget {
+  @override
+  _MyCustomWidgetState createState() => _MyCustomWidgetState();
+}
+
+class _MyCustomWidgetState extends State<MyCustomWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body:
+
+      Column(
+        children: [
+          SizedBox(height: 50),
+          SlimyCard(
+            topCardWidget: topCardWidget(),
+            bottomCardWidget: bottomCardWidget(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// This widget will be passed as Top Card's Widget.
+Widget topCardWidget() {
+  return Column(
+    children: [
+      // Image.asset(
+      //   "assets/tooth1.png",
+      //   width: 100,
+      //   height: 100,
+      // ),
+      Text(
+        'customize as you wish.',
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.white.withOpacity(.85),
+        ),
+      ),
+    ],
+  );
+}
+
+// This widget will be passed as Bottom Card's Widget.
+Widget bottomCardWidget() {
+  return Column(
+    children: [
+      ElevatedButton(onPressed: () {}, child: const Text("go")),
+      Text(
+        'customize as you wish.',
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.white.withOpacity(.85),
+        ),
+      ),
+    ],
+  );
+}
+
+
+
+//copyright to DDC 
